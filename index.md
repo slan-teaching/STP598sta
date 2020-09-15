@@ -8,11 +8,15 @@ This course focuses on modern techniques in analyzing spatiotemporal data. It co
 
 ### Lecture Notes
 
+**How to download** Open terminal, go to any folder you want to store on your computer, type: `git clone https://github.com/slan-teaching/STP598sta.git` (only once); you can download more lectures in future by `git pull` in the terminal under the folder `STP598sta` (use `cd` to go to this folder). If you are not familiar with GitHub, google 'github clone'.
+
 [lecture 1](https://github.com/slan-teaching/STP598sta/blob/master/lecture_notes/STP598sta_lecture1.pdf)
 
 [lecture 2](https://github.com/slan-teaching/STP598sta/blob/master/lecture_notes/STP598sta_lecture2.pdf)
 
 [lecture 3](https://github.com/slan-teaching/STP598sta/blob/master/lecture_notes/STP598sta_lecture3.pdf)
+
+[demo 1 (lect 2 & 3)](https://github.com/slan-teaching/STP598sta/blob/master/demos/STP598sta_krigCAR.html)
 
 ### Homework Assignments
 
