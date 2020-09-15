@@ -1,0 +1,231 @@
+---
+title: "STP598sta: Spatiotemporal Analysis"
+subtitle: "Point-referenced Models and Areal Models"
+author: "Shiwei Lan"
+date: Fall 2020
+output:
+  html_document:
+    fontsize: 16pt
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(message = FALSE)
+options(width = 1000)
+```
+
+## R Resources
+
+We use `R` <http://cran.r-project.org/> for some demos in this lecture. `RStudio` <http://www.rstudio.com> is also recommended. Actually, this html demo is written RStudio using `RMarkdown`.
+
+## Point-referenced Models
+
+In lecture 1, we have learned point-referenced data models.
+Let's look at some examples. More specifically, we will use `R` to show **EDA**, **variogram** and **kriging**.
+To do that, we need R package called `geoR`. Let's install it.
+
+```{r, eval=FALSE}
+install.packages('geoR')
+```
+
+After we install it, we load it.
+
+```{r}
+library('geoR')
+```
+
+Ok, now we are ready for some exploratory data analysis (EDA).
+
+### EDA
+
+Let's first look at the scallops data, which give the locations and scallop catches in the Atlantic waters off the coasts of New Jersey and Long Island, New York.
+
+```{r}
+myscallops<-read.table('https://www.counterpointstat.com/uploads/1/1/9/3/119383887/myscallops.txt',header=T)
+```
+
+If the link fails, try to download it from the course website.
+Now we plot the locations on the map.
+```{r,eval=FALSE}
+install.packages('maps')
+```
+
+```{r}
+library(maps)
+map('usa',xlim=c(-75.5,-71),ylim=c(38.2,41.5))
+points(myscallops$long,myscallops$lat,pch=20,cex=0.75)
+```
+
+It is often helpful to create image plots and place contour lines on the plot.
+These provide a visualization of the relized spatial surface. It is necessary to interpolate data to 'gap' areas.
+For this purpose, we use the `interp.new` function in the R package `akima`.
+Then contour lines can be added to the plot using the `contour` function.
+
+```{r,eval=FALSE}
+install.packages('akima')
+```
+
+```{r}
+library(akima)
+int.scp = interp(myscallops$long,myscallops$lat,myscallops$lgcatch,extrap=T)
+image(int.scp,xlim=range(myscallops$long),ylim=range(myscallops$lat),xlab='Longitude',ylab='Latitude')
+contour(int.scp,add=T)
+```
+
+Another useful tool is the 3d surface plot by `persp` function:
+
+```{r}
+persp(int.scp,theta = -30, phi = 30,xlim=range(myscallops$long),ylim=range(myscallops$lat),xlab='Longitude',ylab='Latitude',zlab='logcatch')
+```
+
+### variograms
+
+Now we estimate variograms. We will use `variog` function from `geoR` package.
+This function takes `geodata` object as in put, which can be created using `as.geodata` function.
+
+```{r}
+obj = cbind(myscallops$long,myscallops$lat,myscallops$lgcatch)
+scallops.geo=as.geodata(obj,coords.col = 1:2,data.col = 3)
+```
+
+Now, a variogram object is created using `variog` function.
+And the robust estimator can be obtained by using 'modulus' type in `variog` function.
+
+```{r}
+scallops.var=variog(scallops.geo,estimator.type='classical')
+# scallops.var
+scallops.var.robust=variog(scallops.geo,estimator.type='modulus')
+```
+
+We can plot them together
+```{r, fig.height = 4, fig.width = 9}
+par(mfrow=c(1,2))
+plot(scallops.var)
+title('semivariogram')
+plot(scallops.var.robust)
+title('robust semivariogram')
+```
+
+Followingly, we use `variofit` function from `geoR` to estimate the sill, the range, and the nugget parameters under a specific covariance model.
+We can specify the covariance model by `cov.model` option.
+
+```{r}
+scallops.var.fit=variofit(scallops.var.robust, ini.cov.pars=c(2.0,.5),cov.model='exponential',fix.nugget = F,nugget = 1.0)
+print(scallops.var.fit)
+```
+
+A Bayesian approach is also available through `likfit` function in `geoR`.
+```{r}
+scallops.lik.fit=likfit(scallops.geo, ini.cov.pars = c(2.0,.5),cov.model='exponential',trend='cte',fix.nugget = F,nugget = 1.0,nospatial=T,lik.method='ML')
+print(scallops.lik.fit)
+```
+where `trend="cte"` means a spatial regression model with constant mean. The estimated result is `r scallops.lik.fit$beta`.
+
+### kriging
+
+There are two built-in functions in `geoR` for kriging: `krige.conv` is for convential kriging; `krige.bayes` performs Bayesian kriging.
+Note, `krige.bayes` is limited to fitting a spatial regression model with constant mean, an exponential covariance model, a flat prior for the constant trend level, the reciprocal (Jeffrey's) prior for the sill, and a discrete uniform prior for the nugget.
+
+```{r, results='hide'}
+scallops.bayes = krige.bayes(scallops.geo,locations = 'no',borders = NULL, model = model.control(trend.d='cte',cov.model = 'exponential'),prior = prior.control(beta.prior = 'flat',sigmasq.prior = 'reciprocal',tausq.rel.prior ='uniform', tausq.rel.discrete = seq(0,1,.01) ))
+```
+
+We obtain samples for the mean, the sill, the range, and the nugget.
+
+```{r, fig.height = 7, fig.width = 9}
+out=scallops.bayes$posterior$sample
+par(mfrow=c(2,2))
+hist(out$beta,breaks=20,freq=F,main=NULL)
+lines(density(out$beta),col='blue',lwd=2)
+title('mean')
+hist(out$sigmasq,breaks=20,freq=F,main=NULL)
+lines(density(out$sigmasq),col='blue',lwd=2)
+title('sill')
+hist(out$phi,breaks=20,freq=F,main=NULL)
+lines(density(out$phi),col='blue',lwd=2)
+title('range')
+hist(out$tausq,breaks=20,freq=F,main=NULL)
+lines(density(out$tausq),col='blue',lwd=2)
+title('nugget')
+```
+
+## Areal Models
+
+In this section, we use some `R` function to obtain proximity matrix, compute Moran's and Geary's statistics and fit CAR and SAR models.
+We will the `R` package named `spdep`. Let's first install and load it.
+
+```{r, eval=F}
+install.packages('spdep')
+install.packages('maptools')
+install.packages('RColorBrewer')
+```
+
+```{r}
+library(spdep)
+library(maptools)
+library(classInt)
+library(RColorBrewer)
+```
+
+First, let's compute the proximity (adjacency) matrix of US states.
+```{r}
+usa.state=map(database="state", fill=TRUE, plot=FALSE)
+state.ID <- sapply(strsplit(usa.state$names, ":"), function(x) x[1])
+usa.poly = map2SpatialPolygons(usa.state, IDs=state.ID)
+usa.nb = poly2nb(usa.poly)
+usa.adj.mat = nb2mat(usa.nb, style="B")
+```
+
+Constructing adjacency matrices for counties in a U.S. state is a little different because of the naming convention in `map`.
+Now let's take Minnesota for example.
+```{r}
+mn.county = map("county", "minnesota", fill=TRUE, plot=FALSE)
+county.ID <- sapply(strsplit(mn.county$names, ","), function(x) x[2])
+mn.poly = map2SpatialPolygons(mn.county, IDs=county.ID)
+mn.nb = poly2nb(mn.poly)
+mn.adj.mat = nb2mat(mn.nb, style="B")
+```
+One can easily retrieve neighbors of a country. Let's obtain neighbors of `Winona` county in Minnesota.
+```{r}
+mn.region.id <- attr(mn.nb, "region.id")
+winona.neighbors.index = mn.nb[[match("winona", mn.region.id)]]
+winona.neighbors = rownames(mn.adj.mat[winona.neighbors.index,])
+print(winona.neighbors)
+```
+
+### Moran's I and Geary's C
+
+Now we can use `moran.test` and `geary.test` functions in the `spdep` package to obtain Moran's I and Geary's C statistics. Let's use the SAT scores data for illustration. First we need to convert `usa.nb` to a `listw` object in `R`.
+
+```{r}
+usa.listw = nb2listw(usa.nb, style="W")
+state.sat.scores<-read.table('https://www.counterpointstat.com/uploads/1/1/9/3/119383887/state-sat.dat',header=F)
+colnames(state.sat.scores) <- c('STATE','VERBAL','MATH','PERCT')
+# remove alaska and hawaii
+x = ((state.sat.scores$STATE=="alaska") | (state.sat.scores$STATE=="hawaii") | (state.sat.scores$STATE=="us"))
+index = c(1:nrow(state.sat.scores))[x]
+state.sat.scores.contig = state.sat.scores[-index,]
+```
+
+Next we use `moran.test` function to obtain
+```{r}
+moran.out=moran.test(state.sat.scores.contig$VERBAL, listw=usa.listw)
+moran.I = moran.out$estimate[1]
+moran.I.se = sqrt(moran.out$estimate[3])
+moran_tab=data.frame(I=moran.I, se=moran.I.se)
+table(moran_tab)
+```
+Geary's C can be computed analogously using the `geary.test` function
+```{r}
+geary.out=geary.test(state.sat.scores.contig$VERBAL, listw=usa.listw)
+geary.C = geary.out$estimate[1]
+geary.C.se = sqrt(geary.out$estimate[3])
+geary_tab=data.frame(C=geary.C, se=geary.C.se)
+table(geary_tab)
+```
+
+### CAR
+
+### SAR
