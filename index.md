@@ -2,6 +2,10 @@
 
 This course focuses on modern techniques in analyzing spatiotemporal data. It consists of two major parts: spatial statistics and time series. The topics will in- clude spatial process, areal data models, hierarchical spatial modeling, time series regression, ARMA/ARIMA models, Gaussian process, and state-space models.
 
+### Announcements:
+
+* All the video recordings can now be found at `canvas -> zoom -> could recordings`. I will not post it at `modules` as the space is limited.
+
 ### Syllabus
 
 [syllabus](https://github.com/slan-teaching/STP598sta/blob/master/syllabus_STP598sta.pdf)
