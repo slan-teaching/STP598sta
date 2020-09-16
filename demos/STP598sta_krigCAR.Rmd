@@ -226,6 +226,117 @@ geary_tab=data.frame(C=geary.C, se=geary.C.se)
 table(geary_tab)
 ```
 
-### CAR
+### SAR and CAR model fitting
 
-### SAR
+Now we fit spatial autoregression models using available functions in the `spdep` package. 
+
+* **SIDS**
+
+A convenient illustration is offered by the `SIDS (sudden infant death syndrome)`, loaded into the `spdep` package. This dataset contains counts of SIDS deaths from 1974 to 1978 and counts from 1979 to 1983 along with related covariate information for the 100 counties in the U.S. State of North Carolina.
+The dataset can be read from a shapefile `sids.shp` and an `nb` object can be constructed from a GAL file `ncCC89` included in `spdep`.
+```{r}
+nc.sids <- readShapePoly(system.file("shapes/sids.shp", package="spData")[1],ID="FIPSNO", proj4string=CRS("+proj=longlat +ellps=clrk66"))
+rn <- sapply(slot(nc.sids, "polygons"), function(x) slot(x, "ID"))
+ncCC89.nb <- read.gal(system.file("weights/ncCC89.gal", package="spData")[1], region.id=rn)
+```
+The first step produces a `SpatialPolygonsDataFrame` object `nc.sids`, while the second step produces the region IDs and stores them in `rn`. The third step uses these region IDs to produce an `nb` object by directly reading from the GAL file. 
+
+We next use a Freeman-Tukey transformation to produce the **transformed rates** and append them to the `nc.sids` object.
+```{r}
+nc.sids.rates.FT = sqrt(1000) * (sqrt(nc.sids$SID79/nc.sids$BIR79) + sqrt((nc.sids$SID79 + 1)/nc.sids$BIR79))
+nc.sids$rates.FT = nc.sids.rates.FT
+```
+
+We wish to regress these rates on the **non-white birth rates** over the same period. This variable is available as `NWBIR79` in the `nc.sids` object. We will use the Freeman-Tukey transformed birth rates
+```{r}
+nc.sids.nwbir.FT = sqrt(1000) * (sqrt(nc.sids$NWBIR79/nc.sids$BIR79) + sqrt((nc.sids$NWBIR79 + 1)/nc.sids$BIR79))
+nc.sids$nwbir.FT = nc.sids.nwbir.FT
+```
+
+Maximum likelihood estimation can be carried out using the `errorsarlm` or `spautolm` function in `spdep`.
+First, we fit a SAR model.
+```{r warning = FALSE}
+# prepare for adjacency matrix
+ncCC89.listw = nb2listw(ncCC89.nb, style="B", zero.policy=TRUE) # zero.policy=TRUE because of two islands
+# nc.county.id = attr(ncCC89.nb, "region.id")
+# nc.no.neighbors = card(ncCC89.nb)
+# nc.islands = as.character(nc.sids[card(ncCC89.nb) == 0, ]$NAME)
+# print(nc.islands)
+# fit SAR model
+#nc.sids.sar.out = errorsarlm(rates.FT~ nwbir.FT, data=nc.sids, listw=ncCC89.listw, zero.policy=TRUE)
+nc.sids.sar.out = spautolm(rates.FT~ nwbir.FT, data=nc.sids, family="SAR", listw=ncCC89.listw, zero.policy=TRUE)
+summary(nc.sids.sar.out)
+nc.sids$fitted.sar = fitted(nc.sids.sar.out)
+```
+Then, we fit a CAR model.
+```{r warning = FALSE}
+# fit CAR model
+nc.sids.car.out = spautolm(rates.FT~ nwbir.FT, data=nc.sids, family="CAR", listw=ncCC89.listw, zero.policy=TRUE)
+summary(nc.sids.car.out)
+nc.sids$fitted.car = fitted(nc.sids.car.out)
+```
+
+
+Once the estimates from the model have been obtained, we may wish to plot the fitted rates and compare them with the raw data. 
+```{r fig.height = 8, fig.width = 7}
+#Draw the maps using the maps function
+library(maps)
+library(classInt)
+brks = c(0, 2.0, 3.0, 3.5, 6.0)
+color.pallete = rev(brewer.pal(4,"RdBu"))
+class.raw = classIntervals(var=nc.sids$rates.FT, n=4, style="fixed", fixedBreaks=brks, dataPrecision=4)
+color.code.raw = findColours(class.raw, color.pallete)
+class.fitted = classIntervals(var=nc.sids$fitted.sar, n=4, style="fixed", fixedBreaks=brks, dataPrecision=4)
+color.code.fitted = findColours(class.fitted, color.pallete)
+
+leg.txt = c("<2.0", "2.0-3.0", "3.0-3.5",">3.5")
+
+par(mfrow=c(2,1), oma = c(0,0,4,0) + 0.1, mar = c(0,0,1,0) + 0.1)
+plot(nc.sids, col=color.code.raw)
+title("a) Raw Freeman-Tukey transformed SIDS rates" )
+legend("bottomleft", legend=leg.txt, cex=1.25, bty="n", horiz = FALSE, fill = color.pallete)
+plot(nc.sids, col=color.code.fitted)
+title("b) Fitted SIDS rates from SAR model")
+```
+
+* **Columbus**
+
+So far, we have fit SAR and CAR models based on adjacency matrices.
+In the following, we are going to build SAR and CAR models using distance.
+For this purpose, we consider a different data set called `Columbus`, available in the `spdep` package.
+This data set offers neighborhood-level information on crime, mean home value, mean income, and other variables for 49 neighborhoods in Columbus, OH, during 1980
+
+Let's first create a `SpatialPolygonsDataFrame` object by reading a Columbus shapefile.
+```{r}
+columbus.poly <- readShapePoly(system.file("shapes/columbus.shp", package="spData")[1])
+```
+To create a distance-based neighborhood object, we need `dnearneigh` function from `spdep`.
+To avoid ``islands", we refer to k-nearest neighbors.
+```{r}
+columbus.coords = coordinates(columbus.poly)
+columbus.knn = knearneigh(columbus.coords)
+columbus.knn2nb = knn2nb(columbus.knn)
+columbus.dist.list = nbdists(columbus.knn2nb, columbus.coords)
+columbus.dist.vec = unlist(columbus.dist.list)
+columbus.dist.max = max(columbus.dist.vec)
+columbus.dnn.nb = dnearneigh(columbus.coords, 0, columbus.dist.max)
+```
+And finally we form a distance-based proximity matrix (`listw` object) that can be used in `spautolm`.
+```{r}
+columbus.dnn.listw = nb2listw(columbus.dnn.nb, style="B", zero.policy=TRUE)
+```
+
+Now we are ready to build SAR and CAR models as before.
+```{r warning = FALSE}
+##SAR model regressing HOUSE_VAL+INCOME using distance-based nearest neighbors
+columbus.dnn.sar.out = spautolm(CRIME~HOVAL+INC, data=columbus.poly, family="SAR", listw=columbus.dnn.listw, zero.policy=TRUE)
+columbus.dnn.sar.fitted = fitted(columbus.dnn.sar.out)
+columbus.poly$fitted.dnn.sar = columbus.dnn.sar.fitted
+summary(columbus.dnn.sar.out)
+
+##CAR model regressing HOUSE_VAL+INCOME using distance-based nearest neighbors
+columbus.dnn.car.out = spautolm(CRIME~HOVAL+INC, data=columbus.poly, family="CAR", listw=columbus.dnn.listw, zero.policy=TRUE)
+columbus.dnn.car.fitted = fitted(columbus.dnn.car.out)
+columbus.poly$fitted.dnn.car = columbus.dnn.car.fitted
+summary(columbus.dnn.car.out)
+```
