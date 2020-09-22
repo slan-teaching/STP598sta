@@ -24,6 +24,8 @@ This course focuses on modern techniques in analyzing spatiotemporal data. It co
 
 [demo 1 (lect 2 & 3)](https://github.com/slan-teaching/STP598sta/blob/master/demos/STP598sta_krigCAR.html)
 
+[lecture 4](https://github.com/slan-teaching/STP598sta/blob/master/lecture_notes/STP598sta_lecture4.pdf)
+
 ### Homework Assignments
 
 [Homework 1](https://github.com/slan-teaching/STP598sta/blob/master/Homework/STP598sta_hw1.pdf)
