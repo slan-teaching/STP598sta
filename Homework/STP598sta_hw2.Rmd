@@ -2,7 +2,7 @@
 title: "STP598sta: Spatiotemporal Analysis"
 subtitle: "Homework 2"
 author: "Name: Your name; NetID: Your ID"
-date: "Due 11:59pm Friday October 9, 2020"
+date: "Due 11:59pm Sunday October 11, 2020"
 output:
   pdf_document: default
   # html_document: default
