@@ -32,7 +32,7 @@ This course focuses on modern techniques in analyzing spatiotemporal data. It co
 
 ### Homework Assignments
 
-[Homework 1](https://github.com/slan-teaching/STP598sta/blob/master/Homework/STP598sta_hw1.pdf)
+[Homework 1](https://github.com/slan-teaching/STP598sta/blob/master/Homework/STP598sta_hw1.pdf);    [RMW](https://github.com/slan-teaching/STP598sta/blob/master/Homework/RWM.R);    [slice](https://github.com/slan-teaching/STP598sta/blob/master/Homework/slice.R)
 
 [Homework 2](https://github.com/slan-teaching/STP598sta/blob/master/Homework/STP598sta_hw2.pdf)
 
