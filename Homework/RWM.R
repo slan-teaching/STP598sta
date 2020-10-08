@@ -10,7 +10,7 @@
 #   u: new potential energy
 #   Ind: proposal acceptance indicator
 
-RWMt = function (q_cur, u_cur, U, eps=.1){
+RWM = function (q_cur, u_cur, U, eps=.1){
 #    browser()
     # initialization
     q = q_cur; D = length(q)
