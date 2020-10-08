@@ -50,6 +50,7 @@ Now we run random walk Metropolis (RMW) to generate samples.
 ```{r}
 set.seed(2020)
 source('RWM.R')
+source('slice.R')
 
 # set step size
 eps = c(2.,.2)
@@ -66,18 +67,29 @@ beta = rnorm(2, sd=sqrt(sigma2_0))
 
 U = function(beta)-logpost(beta)
 u = U(beta)
+logf_k = function(beta_k,k){
+  beta[k] = beta_k
+  return(logpost(beta))
+}
 
 # generate samples
 for(i in 1:(n_burn+n_samp)){
-  if(i %% 100==0){
-    print(paste('Online acceptannce rate at iteration ',i,' is: ',round(accp/100,2),sep=''))
-    accp=0
-    print(paste('Accumulative acceptannce rate at iteration ',i,' is: ',round(acpt/i,2),sep=''))
+  # RWM
+  # if(i %% 100==0){
+  #   print(paste('Online acceptannce rate at iteration ',i,' is: ',round(accp/100,2),sep=''))
+  #   accp=0
+  #   print(paste('Accumulative acceptannce rate at iteration ',i,' is: ',round(acpt/i,2),sep=''))
+  # }
+  # res = RWM(beta,u,U,eps)
+  # beta = res$q; u = res$u
+  # accp = accp+ res$Ind
+  # acpt = acpt+ res$Ind
+  
+  # slice
+  for(k in 1:length(beta)){
+    beta[k] = slice(function(beta_k)logf_k(beta_k,k),beta[k])
   }
-  res = RWM(beta,u,U,eps)
-  beta = res$q; u = res$u
-  accp = accp+ res$Ind
-  acpt = acpt+ res$Ind
+  
   # save samples
   if(i==n_burn) print('Burning completed. Saving samples...')
   if (i>n_burn){
@@ -91,7 +103,9 @@ Now we have samples and we can check the convergence by `geweke` from `coda`.
 ```{r}
 library(coda)
 samp_mcmc=mcmc(samp)
-geweke.diag(samp_mcmc)
+diag = geweke.diag(samp_mcmc)
+# p-value
+pnorm(abs(diag$z),lower.tail=F)*2
 ```
 
 And we can plot posterior samples.
