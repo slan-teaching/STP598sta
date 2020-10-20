@@ -6,7 +6,7 @@ This course focuses on modern techniques in analyzing spatiotemporal data. It co
 
 * All the video recordings can now be found at `canvas -> zoom -> could recordings`. I will not post it at `modules` as the space is limited.
 
-* Homework 2 is avaiable on both canvas and the course website. Due **11:59pm Sunday October 11, 2020**.
+* Midterm is avaiable on both canvas and the course website. Due **11:59pm Friday October 30, 2020**.
 
 ### Syllabus
 
@@ -40,7 +40,7 @@ This course focuses on modern techniques in analyzing spatiotemporal data. It co
 
 ### Exam
 
-Midterm
+[Midterm](https://github.com/slan-teaching/STP598sta/blob/master/Project/Midterm.pdf)
 
 ### Final Project
 
