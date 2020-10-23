@@ -1,0 +1,46 @@
+---
+title: "STP598sta: Spatiotemporal Analysis"
+subtitle: "Homework 3"
+author: "Name: Your name; NetID: Your ID"
+date: "Due 11:59pm Sunday November 1, 2020"
+output:
+  pdf_document: default
+  # html_document: default
+  # word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(message = FALSE)
+options(width = 1000)
+```
+
+## Question 1
+
+Compute the coherence (generalized correlation), $\frac{\mathrm{cov}(Y_\ell({\bf s}), Y_{\ell'}({\bf s}+{\bf h}))}{\sqrt{\mathrm{cov}(Y_\ell({\bf s}), Y_\ell({\bf s}+{\bf h})) \mathrm{cov}(Y_{\ell'}({\bf s}), Y_{\ell'}({\bf s}+{\bf h})) }}$:
+
+(a) for the cross-covariance $\Sigma_{{\bf Y}({\bf s}),{\bf Y}({\bf s}')} = C({\bf s}-{\bf s}') = \sum_{j=1}^p \rho_j({\bf s}-{\bf s}') T_j$.
+
+(b) for the cross-covariance $C({\bf s}-{\bf s}') = \sum_{u=1}^r \rho_u({\bf s}-{\bf s}') T^{(u)}$.
+
+
+
+## Question 2
+
+Let $Y({\bf s}) = (Y_1({\bf s}), Y_2({\bf s}))^T$ be a bivariate process with a stationary cross-covariance matrix function
+$$C({\bf s}-{\bf s}') = \begin{pmatrix} c_{11}({\bf s}-{\bf s}') & c_{12}({\bf s}-{\bf s}')\\ c_{12}({\bf s}'-{\bf s}) & c_{22}({\bf s}-{\bf s}') \end{pmatrix}$$
+and a set of covariates ${\bf x}({\bf s})$. Let ${\bf y}=({\bf y}_1^T, {\bf y}_2^T)^T$ be the $2n\times 1$ data vector, with ${\bf y}_1^T = (y_1({\bf s}_1), \cdots, y_1({\bf s}_n))^T$ and ${\bf y}_2^T = (y_2({\bf s}_1), \cdots, y_2({\bf s}_n))^T$.
+
+(a) Show that the cokriging predictor has the form $$\mathrm{E}[Y_1({\bf s}_0)|{\bf y}] = {\bf x}^T({\bf s}_0)\boldsymbol\beta + \boldsymbol\gamma^T \Sigma^{-1}({\bf y} - X\boldsymbol\beta)$$, with appropriate definitions of $\boldsymbol\gamma$ and $\Sigma$.
+
+
+(b) Show further that if ${\bf s}_k$ is a site where $y_l({\bf s}_k)$ is observed, then for $l=1,2$, $\mathrm{E}[Y_l({\bf s}_k)|{\bf y}]=y_l({\bf s}_k)$ if and only if $\tau^2_l=0$.
+
+
+## Question 3
+
+In the Case 3: dependent and not identical latent CAR variables for coregionalization MCAR, show that the covariance matrix $(I_{p\times p} \otimes D - B\otimes W)^{-1}$ can be expressed as
+
+$$(I_{p\times p}\otimes D)^{\frac12} (I_{pn\times pn}-B\otimes D^{-\frac12}W D^{-\frac12}) (I_{p\times p}\otimes D)^{\frac12}$$
+
+
