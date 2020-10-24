@@ -8,6 +8,8 @@ This course focuses on modern techniques in analyzing spatiotemporal data. It co
 
 * Midterm is avaiable on both canvas and the course website. Due **11:59pm Friday October 30, 2020**.
 
+* Homework 3 is available on both canvas and course website. Due 11:59pm Sunday 11/01/2020.
+
 ### Syllabus
 
 [syllabus](https://github.com/slan-teaching/STP598sta/blob/master/syllabus_STP598sta.pdf)
@@ -39,6 +41,8 @@ This course focuses on modern techniques in analyzing spatiotemporal data. It co
 [Homework 1](https://github.com/slan-teaching/STP598sta/blob/master/Homework/STP598sta_hw1.pdf)
 
 [Homework 2](https://github.com/slan-teaching/STP598sta/blob/master/Homework/STP598sta_hw2.pdf);    [RMW](https://github.com/slan-teaching/STP598sta/blob/master/Homework/RWM.R);    [slice](https://github.com/slan-teaching/STP598sta/blob/master/Homework/slice.R);    [example](https://github.com/slan-teaching/STP598sta/blob/master/Homework/BayesMCMC.html)
+
+[Homework 3](https://github.com/slan-teaching/STP598sta/blob/master/Homework/STP598sta_hw3.pdf)
 
 ### Exam
 
