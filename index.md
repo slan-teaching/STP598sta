@@ -38,6 +38,8 @@ This course focuses on modern techniques in analyzing spatiotemporal data. It co
 
 [lecture 7](https://github.com/slan-teaching/STP598sta/blob/master/lecture_notes/STP598sta_lecture7.pdf)
 
+[lecture 8](https://github.com/slan-teaching/STP598sta/blob/master/lecture_notes/STP598sta_lecture8.pdf)
+
 ### Homework Assignments
 
 [Homework 1](https://github.com/slan-teaching/STP598sta/blob/master/Homework/STP598sta_hw1.pdf)
