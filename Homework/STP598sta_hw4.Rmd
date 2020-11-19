@@ -1,0 +1,65 @@
+---
+title: "STP598sta: Spatiotemporal Analysis"
+subtitle: "Homework 4"
+author: "Name: Your name; NetID: Your ID"
+date: "Due 11:59pm Monday November 30, 2020"
+output:
+  pdf_document: default
+  # html_document: default
+  # word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(message = FALSE)
+options(width = 1000)
+```
+
+## Question 1
+
+For a moving average process of the form
+$$x_t = w_{t-1} + 2 w_t +  w_{t+1}$$
+where $w_t$ are independent with zero means and variance $\sigma^2_w$, determine the autocovariance and autocorrelation functions as a function of lag $h=s-t$ and plot the ACF as a function of $h$.
+
+
+
+## Question 2
+
+In this problem, we explore the difference between a random walk and a trend stationary process.
+
+(a) Generate four series that are random walk with drift, $x_t = \delta t + \sum_{i=1}^t w_j$, of length $n=100$ with $\delta=0.01$ and $\sigma_w=1$. Call the data $x_t$ for $t=1,\cdots, 100$. Fit the regression $x_t = \beta t + w_t$ using least squares. Plot the data, the true mean function (i.e. $\mu_t = 0.01t$) and the fitted line, $\hat x_t = \hat\beta t$, on the same graph. Hint: The following `R` code may be useful.
+
+```{r, eval=F}
+par(mfrow=c(2,2), mar=c(2.5,2.5,0,0)+.5, mgp=c(1.6,.6,0)) # set up 
+for (i in 1:4){
+  x = ts(cumsum(rnorm(100,.01,1)))        # data
+  regx = lm(x~0+time(x), na.action=NULL)  # regression
+  plot(x, ylab='Random Walk w Drift')     # plots
+  abline(a=0, b=.01, col=2, lty=2)        # true mean (red - dashed)
+  abline(regx, col=4)                     # fitted line (blue -  solid)
+}
+```
+
+(b) Generate four series of length $n=100$ that are linear trend plus noise, say $y_t =0.01t +w_t$, where $t$ and $w_t$ are as in part (a). Fit the regression $y_t = \beta t +w_t$ using least squares. Plot the data, the true mean function (i.e. $\mu_t=0.01 t$) and the fitted line, $\hat y_t = \hat\beta t$, on the same graph.
+
+(c) Comment (what did you learn from this assignment).
+
+## Question 3
+
+For the AR(2) series $x_t+1.6x_{t-1}+0.64 x_{t-2}=w_t$, use the difference equation (ref pages 19-25 of lecture 8, or the reustls of Example 3.10 of TSA book) to find the ACF $\rho(h), h=0,1,\cdots$; solve for the constants in the ACF using the initial conditions. Then plot the ACF values to lag 10 (use `ARMAacf` as a check on your answers).
+
+## Question 4
+
+Generate $n=100$ observations from each of the three models: (a) AR(1), (b) MAR(1) and (c) ARMA(1,1) with $\phi=0.6$ and $\theta=0.9$. Plot the (sample) ACF and PACF for each of the three models and compare with their theoretic values. What do you find abou their tailing behavior?
+
+## Question 5
+
+Simulate $n = 100$ observations from the following state-space model:
+\begin{align*}
+x_t &= 0.8 x_{t-1} + w_t, \quad w_t \overset{iid}{\sim} N(0, 1) \\
+y_t &= x_t + v_t, \quad v_t \overset{iid}{\sim} N(0, 1) 
+\end{align*}
+where $x_0\sim N(0, \sigma^2=2.5)$. 
+Plot the prediction, filtering, and smoothing using the generated data.
+Hint: Use the provided demo `prediction_filter_smooth` as a guide.
+
