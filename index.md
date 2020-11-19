@@ -6,9 +6,9 @@ This course focuses on modern techniques in analyzing spatiotemporal data. It co
 
 * All the video recordings can now be found at `canvas -> zoom -> could recordings`. I will not post it at `modules` as the space is limited.
 
-* Midterm is avaiable on both canvas and the course website. Due **11:59pm Friday October 30, 2020**.
+* Homework 4 is available on both canvas and course website. **Due 11:59pm Monday 11/30/2020**.
 
-* Homework 3 is available on both canvas and course website. Due 11:59pm Sunday 11/01/2020.
+* Final is avaiable on both canvas and the course website. Due **11:59pm , 2020**.
 
 ### Syllabus
 
