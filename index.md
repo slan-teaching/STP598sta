@@ -8,7 +8,7 @@ This course focuses on modern techniques in analyzing spatiotemporal data. It co
 
 * Homework 4 is available on both canvas and course website. **Due 11:59pm Monday 11/30/2020**.
 
-* Final is avaiable on both canvas and the course website. Due **11:59pm , 2020**.
+* Final is avaiable on both canvas and the course website. Due **11:59pm, Tuesday 12/08/2020**.
 
 ### Syllabus
 
@@ -64,4 +64,4 @@ This course focuses on modern techniques in analyzing spatiotemporal data. It co
 
 ### Final Project
 
-Project
+[Project](https://github.com/slan-teaching/STP598sta/blob/master/Project/Midterm.pdf)
