@@ -6,7 +6,9 @@ This course focuses on modern techniques in analyzing spatiotemporal data. It co
 
 * Welcome! Masks are required in classroom. If you cannot attend in person for some reason, use the [zoom](https://asu.zoom.us/j/84260002527?pwd=SUdCZ2pXYXF0SnBMdWwyVDcxVlYvdz09).
 
-* All the video recordings can now be found at `canvas -> zoom -> could recordings`. I will not post it at `modules` as the space is limited.
+* All the video recordings can now be found at `canvas -> zoom -> could recordings`.
+
+* [Homework 1](https://github.com/slan-teaching/STP598sta/blob/master/Homework/STP598sta_hw1.pdf) is available on canvas, due **11:59pm Sunday Sept. 19, 2021**.
 
 ### Syllabus
 
@@ -48,7 +50,7 @@ This course focuses on modern techniques in analyzing spatiotemporal data. It co
 
 ### Homework Assignments
 
-[Homework 1](https://github.com/slan-teaching/STP598sta/blob/master/Homework/STP598sta_hw1.pdf)
+[Homework 1](https://github.com/slan-teaching/STP598sta/blob/master/Homework/STP598sta_hw1.pdf);    [Rmd](https://github.com/slan-teaching/STP598sta/blob/master/Homework/STP598sta_hw1.Rmd)
 
 [Homework 2](https://github.com/slan-teaching/STP598sta/blob/master/Homework/STP598sta_hw2.pdf);    [RMW](https://github.com/slan-teaching/STP598sta/blob/master/Homework/RWM.R);    [slice](https://github.com/slan-teaching/STP598sta/blob/master/Homework/slice.R);    [example](https://github.com/slan-teaching/STP598sta/blob/master/Homework/BayesMCMC.html)
 
