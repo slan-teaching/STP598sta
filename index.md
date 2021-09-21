@@ -8,7 +8,7 @@ This course focuses on modern techniques in analyzing spatiotemporal data. It co
 
 * All the video recordings can now be found at `canvas -> zoom -> could recordings`.
 
-* [Homework 1](https://github.com/slan-teaching/STP598sta/blob/master/Homework/STP598sta_hw1.pdf) is available on canvas, due **11:59pm Sunday Sept. 19, 2021**.
+* [Homework 2](https://github.com/slan-teaching/STP598sta/blob/master/Homework/STP598sta_hw2.pdf) is available on canvas, due **11:59pm Sunday Oct. 03, 2021**.
 
 ### Syllabus
 
