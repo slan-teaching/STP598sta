@@ -10,6 +10,8 @@ This course focuses on modern techniques in analyzing spatiotemporal data. It co
 
 * [Homework 4](https://github.com/slan-teaching/STP598sta/blob/master/Homework/STP598sta_hw4.pdf) is available on canvas, due **11:59pm Sunday Nov. 7, 2021**.
 
+* [Project_proposal (midterm)](https://github.com/slan-teaching/STP598sta/blob/master/Project/Midterm.pdf) is available on canvas, due **11:59pm Wednesday Nov. 10, 2021**.
+
 ### Syllabus
 
 [syllabus](https://github.com/slan-teaching/STP598sta/blob/master/syllabus_STP598sta.pdf)
