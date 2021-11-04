@@ -66,4 +66,4 @@ This course focuses on modern techniques in analyzing spatiotemporal data. It co
 
 ### Final Project
 
-[Final](https://github.com/slan-teaching/STP598sta/blob/master/Project/Final.pdf)
+[Final](https://github.com/slan-teaching/STP598sta/blob/master/Project/Final.pdf)    [template](https://github.com/slan-teaching/STP598sta/blob/master/Project/template_plan_for_stp598spatem.pdf)
