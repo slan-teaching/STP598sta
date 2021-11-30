@@ -8,9 +8,7 @@ This course focuses on modern techniques in analyzing spatiotemporal data. It co
 
 * All the video recordings can now be found at `canvas -> zoom -> could recordings`.
 
-* [Homework 4](https://github.com/slan-teaching/STP598sta/blob/master/Homework/STP598sta_hw4.pdf) is available on canvas, due **11:59pm Sunday Nov. 7, 2021**.
-
-* [Project_proposal (midterm)](https://github.com/slan-teaching/STP598sta/blob/master/Project/Midterm.pdf) is available on canvas, due **11:59pm Wednesday Nov. 10, 2021**.
+* [Final_Project_Report](https://github.com/slan-teaching/STP598sta/blob/master/Project/Final.pdf) is due **11:59pm Thursday Dec. 9, 2021** on canvas.
 
 ### Syllabus
 
@@ -64,8 +62,8 @@ This course focuses on modern techniques in analyzing spatiotemporal data. It co
 
 ### Exam
 
-[Midterm](https://github.com/slan-teaching/STP598sta/blob/master/Project/Midterm.pdf)
+[Midterm](https://github.com/slan-teaching/STP598sta/blob/master/Project/Midterm.pdf)    [template plan](https://github.com/slan-teaching/STP598sta/blob/master/Project/template_plan_for_stp598spatem.pdf)
 
 ### Final Project
 
-[Final](https://github.com/slan-teaching/STP598sta/blob/master/Project/Final.pdf)    [template](https://github.com/slan-teaching/STP598sta/blob/master/Project/template_plan_for_stp598spatem.pdf)
+[Final](https://github.com/slan-teaching/STP598sta/blob/master/Project/Final.pdf)    [template report](https://github.com/slan-teaching/STP598sta/blob/master/Project/template_final_report.pdf)
