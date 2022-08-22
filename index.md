@@ -8,7 +8,6 @@ This course focuses on modern techniques in analyzing spatiotemporal data. It co
 
 * All the video recordings can now be found at `canvas -> zoom -> could recordings`.
 
-* [Final_Project_Report](https://github.com/slan-teaching/STP598sta/blob/master/Project/Final.pdf) is due **11:59pm Thursday Dec. 9, 2021** on canvas.
 
 ### Syllabus
 
