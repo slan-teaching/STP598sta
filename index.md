@@ -4,9 +4,11 @@ This course focuses on modern techniques in analyzing spatiotemporal data. It co
 
 ### Announcements:
 
-* Welcome! Masks are required in classroom. If you cannot attend in person for some reason, use the [zoom](https://asu.zoom.us/j/84260002527?pwd=SUdCZ2pXYXF0SnBMdWwyVDcxVlYvdz09).
+* Welcome! Masks are required in classroom. If you cannot attend in person for some reason, use the [zoom](https://asu.zoom.us/j/82923263893?pwd=eVdtVGsxblV3RlJqNi9WUUdYalFOdz09).
 
 * All the video recordings can now be found at `canvas -> zoom -> could recordings`.
+
+* A good introduction to **Gaussian process** is this [book](https://gaussianprocess.org/gpml/chapters/RW.pdf).
 
 
 ### Syllabus
