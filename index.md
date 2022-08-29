@@ -4,7 +4,7 @@ This course focuses on modern techniques in analyzing spatiotemporal data. It co
 
 ### Announcements:
 
-* Welcome! Masks are required in classroom. If you cannot attend in person for some reason, use the [zoom](https://asu.zoom.us/j/82923263893?pwd=eVdtVGsxblV3RlJqNi9WUUdYalFOdz09).
+* Welcome! Masks are recommended in classroom. If you cannot attend in person for some reason, use the [zoom](https://asu.zoom.us/j/82923263893?pwd=eVdtVGsxblV3RlJqNi9WUUdYalFOdz09).
 
 * All the video recordings can now be found at `canvas -> zoom -> could recordings`.
 
