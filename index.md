@@ -10,6 +10,7 @@ This course focuses on modern techniques in analyzing spatiotemporal data. It co
 
 * A good introduction to **Gaussian process** is this [book](https://gaussianprocess.org/gpml/chapters/RW.pdf).
 
+* Homework 1 is available on canvas due **11:59pm Friday 09/23, 2022**.
 
 ### Syllabus
 
