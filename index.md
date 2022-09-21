@@ -12,6 +12,8 @@ This course focuses on modern techniques in analyzing spatiotemporal data. It co
 
 * Homework 1 is available on canvas due **11:59pm Friday 09/23, 2022**.
 
+* Homework 2 is available on canvas due **11:59pm Sunday 10/2, 2022**.
+
 ### Syllabus
 
 [syllabus](https://github.com/slan-teaching/STP598sta/blob/master/syllabus_STP598sta.pdf)
