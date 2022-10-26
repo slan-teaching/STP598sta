@@ -2,7 +2,7 @@
 title: "STP598sta: Spatiotemporal Analysis"
 subtitle: "Homework 4"
 author: "Name: Your name; NetID: Your ID"
-date: "Due 11:59pm Sunday November 6, 2022"
+date: "Due 11:59pm Friday November 11, 2022"
 output:
   pdf_document: default
   # html_document: default
@@ -30,7 +30,7 @@ For the AR(2) series $x_t+1.6x_{t-1}+0.64 x_{t-2}=w_t$, use the difference equat
 
 ## Question 3
 
-Generate $n=100$ observations from each of the three models: (a) AR(1), (b) MAR(1) and (c) ARMA(1,1) with $\phi=0.6$ and $\theta=0.9$. Plot the (sample) ACF and PACF for each of the three models and compare with their theoretic values. What do you find about their tailing behavior?
+Generate $n=100$ observations from each of the three models: (a) AR(1), (b) MA(1) and (c) ARMA(1,1) with $\phi=0.6$ and $\theta=0.9$. Plot the (sample) ACF and PACF for each of the three models and compare with their theoretic values. What do you find about their tailing behavior?
 
 
 ## Question 4
