@@ -2,7 +2,7 @@
 title: "STP598sta: Spatiotemporal Analysis"
 subtitle: "Spatiotemporal Modeling"
 author: "Shiwei Lan"
-date: Fall 2021
+date: Fall 2022
 output:
   html_document:
     fontsize: 16pt
