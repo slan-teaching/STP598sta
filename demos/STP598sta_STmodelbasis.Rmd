@@ -1,6 +1,6 @@
 ---
 title: "STP598sta: Spatiotemporal Analysis"
-subtitle: "Spatiotemporal Modeling using temporal basis functions"
+subtitle: "Spatiotemporal Modeling"
 author: "Shiwei Lan"
 date: Fall 2021
 output:
@@ -103,6 +103,8 @@ options(width = 1000)
 \newcommand{\rf}{\vskip .1in\par\sloppy\hangindent=1pc\hangafter=1
                  \noindent}
 
+# Spatiotemporal Modeling using temporal basis functions
+
 In this Lab we model the maximum temperature in the NOAA data set (`Tmax`) using temporal basis functions and spatial random fields. Specifically, we use the model
 \begin{equation}
 Y(\bs;t) = \bx(\bs;t)' \boldsymbol{\beta} + \sum_{i=1}^{n_\alpha} \phi_{i}(t) \alpha_i(\bs) + \nu(\bs;t),
@@ -170,7 +172,7 @@ covars <-  dplyr::select(NOAA_sub, id, lat, lon) %>%
 ```{r}
 STdata <- createSTdata(NOAA_sub_for_STdata, covars = covars)
 ```
-# model fitting
+## model fitting
 
 The model used in **SpatioTemporal** assumes that $\nu(\bs;t)$ is temporally uncorrelated. Consequently, all temporal variability needs to be captured through the covariates or the basis functions. To check whether the data exhibit temporal autocorrelation (before adding any temporal basis functions), one can use the `plot` function. For example, we plot the estimated autocorrelation function for station 3812 in the left panel of Figure \ref{fig:ACFs} (after the mean is removed from the data). The plot suggests that the data are correlated (the estimated lag-1 autocorrelation coefficient is larger than would be expected by chance at the 5\% level of significance).
 
@@ -200,7 +202,7 @@ Sig1 <- 100 - round(mean(unlist(Insig1)),2)*100
 Sig2 <- 100 - round(mean(unlist(Insig2)),2)*100
 ```
 
-\noindent We can see that the lag-1 autocorrelation coefficient is no longer significant (at the 5\% level) after adding in these basis functions; see the right panel of Figure \ref{fig:ACFs}. In practice, one should add basis functions until temporal autocorrelation in the data (at most stations) is considerably reduced. In this case study, it can be shown that \Sexpr{Sig1}\% of stations record maximum temperature data that have lag-1 autocorrelation coefficients that are significant at the 5\% level. On the other hand, with \args{n.basis}` = `\num{2} (i.e., with two temporal basis functions for capturing temporal variation),  the proportion of stations with residuals exhibiting a significant lag-1 autocorrelation coefficient is \Sexpr{Sig2}\%.
+\noindent We can see that the lag-1 autocorrelation coefficient is no longer significant (at the 5\% level) after adding in these basis functions; see the right panel of Figure \ref{fig:ACFs}. In practice, one should add basis functions until temporal autocorrelation in the data (at most stations) is considerably reduced. In this case study, it can be shown that `r Sig1`\% of stations record maximum temperature data that have lag-1 autocorrelation coefficients that are significant at the 5\% level. On the other hand, with `n.basis = 2` (i.e., with two temporal basis functions for capturing temporal variation),  the proportion of stations with residuals exhibiting a significant lag-1 autocorrelation coefficient is `r Sig2`\%.
 
 ```{r, fig.height = 6, fig.width = 9}
 plot(STdata, "acf", ID = "3812")
@@ -247,7 +249,7 @@ ggplot(data_to_plot) +
 # ggsave(LineTrends, file="./temp_basis_fns.png",height=2,width=6)
 ```
 
-In **SpatioTemporal**, the spatial quantities $\{\alpha_i(\bs)\}$ are themselves modeled as spatial fields. Once the $\{\phi_i(t)\}$ are declared, empirical estimates of $\{\alpha_i(\bs)\}$ can be found using the function \fn{estimateBetaFields}. Note that we use the Greek letter ``alpha'' to denote these fields, which differs from the name ``Beta'' inside the command. The following and all subsequent references to ``Beta'' and ``beta'' should be interpreted as representing spatial fields $\{\alpha_i(\bs)\}$.
+In **SpatioTemporal**, the spatial quantities $\{\alpha_i(\bs)\}$ are themselves modeled as spatial fields. Once the $\{\phi_i(t)\}$ are declared, empirical estimates of $\{\alpha_i(\bs)\}$ can be found using the function `estimateBetaFields`. Note that we use the Greek letter "alpha" to denote these fields, which differs from the name "Beta" inside the command. The following and all subsequent references to "Beta" and "beta" should be interpreted as representing spatial fields $\{\alpha_i(\bs)\}$.
 
 ```{r}
 beta.lm <- estimateBetaFields(STdata)
@@ -290,7 +292,7 @@ E(\alpha_1(\bs)) &= \alpha_{11} + \alpha_{12}s_2,\label{eq:alpha1}\\
 E(\alpha_2(\bs)) &= \alpha_{21} + \alpha_{22}s_2,\label{eq:alpha2} \\
 E(\alpha_3(\bs)) &= \alpha_{31},\label{eq:alpha3} \end{align}
 where $s_2$ denotes the latitude coordinate at $\bs = (s_1, s_2)'$.
-\else in \eqref{eq:alpha1}--\eqref{eq:alpha3}. \fi  Note that in this model we do not consider any spatio-temporal covariates, and hence the term $\bx(\bs;t)'\bfbeta = 0$ in \eqref{eq:Yprocess_tbasis2}. This does not mean that we do not have an intercept in our model: although it is random, the spatial field $\alpha_1(\bs)$ acts as a temporally invariant spatial covariate and includes a global space-time mean ($\alpha_{11}$ in \eqref{eq:alpha1}), which is estimated.
+\else in \eqref{eq:alpha1}--\eqref{eq:alpha3}. \fi  Note that in this model we do not consider any spatio-temporal covariates, and hence the term $\bx(\bs;t)'{\bfbeta} = 0$ in \eqref{eq:Yprocess_tbasis2}. This does not mean that we do not have an intercept in our model: although it is random, the spatial field $\alpha_1(\bs)$ acts as a temporally invariant spatial covariate and includes a global space-time mean ($\alpha_{11}$ in \eqref{eq:alpha1}), which is estimated.
 
 ```{r, fig.height = 4, fig.width = 12}
 g1 <- ggplot(BETA) + geom_point(aes(x=lat,y=alpha1)) +
@@ -330,7 +332,7 @@ We let the covariance functions $\cov(\alpha_i(\bs),\alpha_i(\bs + \bh))$, $i = 
 cov.beta <- list(covf = "exp", nugget = FALSE)
 ```
 
-All that remains for constructing the spatio-temporal model is to define the spatial covariance function of the zero-mean, temporally independent, residual process $\nu(\bs;t)$\ifstandalone. \else ; see  \eqref{eq:Yprocess_tbasis2}. \fi We choose this to be an exponential covariance function with a nugget effect to account for measurement error. The argument \args{random.effect} `= ` \num{FALSE} is used to indicate that there is no random mean offset for the field at each time point.
+All that remains for constructing the spatio-temporal model is to define the spatial covariance function of the zero-mean, temporally independent, residual process $\nu(\bs;t)$\ifstandalone. \else ; see  \eqref{eq:Yprocess_tbasis2}. \fi We choose this to be an exponential covariance function with a nugget effect to account for measurement error. The argument `random.effect=FALSE ` is used to indicate that there is no random mean offset for the field at each time point.
 
 ```{r}
 cov.nu <- list(covf = "exp",
@@ -452,7 +454,7 @@ grid.arrange(g0,g1,g2,nrow=1)
 # ggsave(g2, file="./img/Chapter_4/alpha_field3.png",height=2.8,width=3)
 ```
 
-### Using **SpatioTemporal** for Modeling Spatial Effects of Temporal Covariates
+# Using **SpatioTemporal** for Modeling Spatial Effects of Temporal Covariates
 
 In the first part of this Lab, we extracted the temporal basis functions from the data. However, **SpatioTemporal** can also be used to model the spatially varying effect of exo\-gen\-ous temporal covariates. This can be done by manually setting the `STdata\$trend` data frame. When modeling temperature, interesting covariates may include a periodic signal with period equal to one year, or an index such as the El Ni{\~n}o Southern Oscillation (ENSO) Index.
 
