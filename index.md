@@ -4,17 +4,13 @@ This course focuses on modern techniques in analyzing spatiotemporal data. It co
 
 ### Announcements:
 
-* Welcome! Masks are recommended in classroom. If you cannot attend in person for some reason, use the [zoom](https://asu.zoom.us/j/82923263893?pwd=eVdtVGsxblV3RlJqNi9WUUdYalFOdz09).
+* Welcome!
 
-* All the video recordings can now be found at `canvas -> zoom -> could recordings`.
-
-* A good introduction to **Gaussian process** is this [book](https://gaussianprocess.org/gpml/chapters/RW.pdf).
+<!-- * A good introduction to **Gaussian process** is this [book](https://gaussianprocess.org/gpml/chapters/RW.pdf). -->
 
 <!-- * Homework 3 is available on canvas due **11:59pm Friday 10/28, 2022**. -->
 
-* [Final](https://github.com/slan-teaching/STP598sta/blob/master/Project/Final.pdf) is available on canvas due **11:59pm Friday 12/09, 2022**.
-
-* Homework 4 is avaiable on canvas due **11:59pm Friday 11/11 2022. **
+<!-- * [Final](https://github.com/slan-teaching/STP598sta/blob/master/Project/Final.pdf) is available on canvas due **11:59pm Friday 12/09, 2022**. -->
 
 ### Syllabus
 
