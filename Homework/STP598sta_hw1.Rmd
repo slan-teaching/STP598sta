@@ -1,0 +1,57 @@
+---
+title: "STP598sta: Spatiotemporal Analysis"
+subtitle: "Homework 1"
+author: "Name: Your name; NetID: Your ID"
+date: "Due 11:59pm Sunday Sept 15 2024"
+output:
+  pdf_document: default
+  # html_document: default
+  # word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(message = FALSE)
+options(width = 1000)
+```
+
+## Question 1
+
+(a) Given latitude ($\theta$) and longitude ($\lambda$) of two locations $P_1$ and $P_2$. Obtain the formula to calculate the geodesic distance $D$.
+
+(b) Use the earth radius $R=6371$ km. Can you compute the geodesic distances: (1) between Phoenix (33.28N, 112.03W) and Chicago (41.52N, 87.39W), and (2) between New York (40.43N, 73.56W) and Los Angeles (34.03N, 118.15W)?
+
+
+## Question 2
+
+Consider the time series, $Y_t=X=\sin(\omega t+\theta)$ (so $X$ is the amplitude, $\omega$ is the frequency and $\theta$ is the phase) where $X$ is distributed with mean 0 and variance 1 independent of $\theta\sim \mathrm{unif}(-\pi, \pi)$). Show that $Y_t$ is weakly stationary.
+
+
+<!-- ## Question 1 -->
+
+<!-- The \emph{turning bands method} (Christakos, 1984; Stein, 1999a) is a technique for creating stationary covariance functions on $\mathbb R^r$. Let ${\bf u}$ be a random unit vector on $\mathbb R^r$ (by random we mean that the coordinate vector that defines ${\bf u}$ is randomly chosen on the surface of the unit sphere in $\mathbb R^r$). Let $c(\cdot)$ be a valid stationary covariance function on $\mathbb R^1$, and let $W(t)$ be a process on $\mathbb R^1$ having $c(\cdot)$ as its covariance function. Then for any location ${\bf s}\in\mathbb R^r$, define $$Y({\bf s})=W({\bf s}^T{\bf u}).$$ Note that we can think of the process either conditionally given ${\bf u}$, or marginally by integrating with respect to the uniform distribution for ${\bf u}$. Note also that $Y({\bf s})$ has the possibly undersirable property that it is constant on planes (i.e. on ${\bf s}^T{\bf u}=k$). -->
+
+<!-- (a) If $W$ is a Gaussian process, show that, given ${\bf u}$, $Y({\bf s})$ is also a Gaussian process and is stationary. -->
+
+<!-- (b) Show that marginally $Y({\bf s})$ is \emph{not} a Gaussian process, but is isotropic. -->
+<!-- [Hint: Show that $\mathrm{Cov}(Y({\bf s},Y({\bf s'})=\mathrm{E}_{\bf u}c(({\bf s}-{\bf s'})^T{\bf u})$.] -->
+
+## Question 3
+
+Show that a valid variogram $\gamma(\cdot)$ satisfies the negative definiteness condition, i.e. for any set of locations ${\bf s}_1,\cdots, {\bf s}_n$ and any set of $a_1,\cdots, a_n$ such that $\sum_{i=1}^n a_i=0$, we have
+$$\sum_i\sum_j a_ia_j\gamma({\bf s}_i-{\bf s}_j) \leq 0$$
+
+
+## Question 4
+
+Consider the `coalash` data frame in the `gstat` package in `R` and available from [here](https://www.counterpointstat.com/uploads/1/1/9/3/119383887/coal.ash.txt). 
+This data comes from the Pittsburgh coal seam on the Robena Mine Property in Greene County, PA (Cressie, 1993, p. 32). 
+This data frame contains 208 coal ash core samples (the variable coal in the data frame) collected on a grid given by $x$ and $y$ planar coordinates (\emph{not} latitude and longitude).
+
+(a) Plot the sampled sites embedded on a map of the region. Add contour lines to the plot.
+
+(b) Provide a descriptive summary (histograms, stems, quantiles, means, range, etc.) of the variable coal in the data frame.
+
+(c) Plot variograms and correlograms of the response and comment on the need for spatial analysis here.
+
+(d) If you think that there is need for spatial analysis, arrive at your best estimates of the range, nugget, and sill.
