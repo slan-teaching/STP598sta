@@ -1,0 +1,36 @@
+---
+title: "STP598sta: Spatiotemporal Analysis"
+subtitle: "Midterm: Project Plan"
+author: "Name: Your name; NetID: Your ID"
+date: "Due 11:59pm Friday November 08 2024"
+output:
+  pdf_document: default
+urlcolor: blue
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Midterm: Project Plan
+
+Choose a spatiotemporal data set and define a problem (or problems) you want to solve, e.g. regression, classification, prediction, etc.
+Try to use the techniques you learned from the class. But do not be limited to them. Feel free to adopt machine learning/deep learning methods and make comparison.
+
+For the midterm, you need to write a report of planning your data analysis which should includes:
+
+- Choice of the data set and a brief description.
+- Problem(s) you plan to solve.
+
+The report should not exceed 2 pages. Submit it to canvas in pdf.
+
+## No Teamwork
+
+Each individual needs to submit a proposal to canvas.
+
+For submission:
+
+- Submit only an `pdf` or word `doc` file.
+- The file should clearly contain your **name** and **ASU ID**.
+
+You can find datasets at [UCI machine learning data repository](http://archive.ics.uci.edu/ml/datasets.php).
