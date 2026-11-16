@@ -1,0 +1,329 @@
+---
+title: "STP598sta: Spatiotemporal Analysis"
+subtitle: "State Space Models"
+author: "Shiwei Lan"
+date: Fall 2021
+output:
+  html_document:
+    fontsize: 16pt
+    toc: true
+    toc_float: true
+header-includes:
+- \usepackage{amsmath}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(message = FALSE)
+options(width = 1000)
+```
+
+In lecture 9, we have introduced state space models. We will discuss some examples in this demo.
+We will particularly use the `R` package `astsa`.
+
+```{r, eval=FALSE}
+install.packages('astsa')
+```
+
+```{r}
+library(astsa)
+library(xts)
+set.seed(2020)
+```
+
+## Introduction to State Space Models
+
+### Prediction-Filter-Smoother
+
+In lecture 9 we discussed obtaining the state $x_t$ based on the observed data $y_{1:s}$ up to time $s$ and introduced the concepts of `smoothing` ($t<s$), `filtering` $t=s$ and `forecasting or prediction` ($t>s$).
+We derived Kalman filter for the linear Gaussian model.
+
+Let's first construct a simple example of linear Gaussian model.
+\begin{align}
+x_{t} &= x_{t-1} + w_{t}, \quad w_t \overset{iid}N(0,1) \\
+y_{t} &= x_t + v_t{t}, \quad v_t \overset{iid}N(0,1)
+\end{align}
+
+```{r}
+# generate data 
+set.seed(1)  
+num = 50
+w = rnorm(num+1,0,1)
+v = rnorm(num,0,1)
+                               
+mu = cumsum(w)  # states:  mu[0], mu[1], . . ., mu[50] 
+y = mu[-1] + v  # obs:  y[1], . . ., y[50]
+```
+
+Then we use Kalman filter (`Ksmooth0` function) to obtain prediction $x_t^{t-1}$ (`xp`), filter $x_t^t$ (`xf`) and smooth $x_t^n$ (`xs`) respectively.
+
+```{r, fig.height = 6, fig.width = 9}
+# filter and smooth (Ksmooth0 does both)
+mu0 = 0; sigma0 = 1;  phi = 1; cQ = 1; cR = 1   
+ks = Ksmooth0(num, y, 1, mu0, sigma0, phi, cQ, cR)
+
+# pictures 
+par(mfrow=c(3,1))
+Time = 1:num
+
+plot(Time, mu[-1], main="Prediction", ylim=c(-5,10))      
+  lines(ks$xp)
+  lines(ks$xp+2*sqrt(ks$Pp), lty="dashed", col="blue")
+  lines(ks$xp-2*sqrt(ks$Pp), lty="dashed", col="blue")
+
+plot(Time, mu[-1], main="Filter", ylim=c(-5,10))
+  lines(ks$xf)
+  lines(ks$xf+2*sqrt(ks$Pf), lty="dashed", col="blue")
+  lines(ks$xf-2*sqrt(ks$Pf), lty="dashed", col="blue")
+
+plot(Time, mu[-1],  main="Smoother", ylim=c(-5,10))
+  lines(ks$xs)
+  lines(ks$xs+2*sqrt(ks$Ps), lty="dashed", col="blue")
+  lines(ks$xs-2*sqrt(ks$Ps), lty="dashed", col="blue")
+```
+
+We can observe the error bounds becoming narrower as it transitions from `prediction` to `smoother`. 
+We can also contrast the results by plotting them on the same graph.
+
+```{r, fig.height = 3, fig.width = 9}
+plot(Time, mu[-1], type='n')
+abline(v=Time, lty=3, col=8)
+abline(h=-1:5, lty=3, col=8)
+lines(ks$xp, col=4, lwd=5)
+lines(ks$xf, col=3, lwd=5) 
+lines(ks$xs, col=2, lwd=5)
+points(Time, mu[-1], pch=19, cex=1.5)
+names = c("predictor","filter","smoother")
+legend("bottomright", names, col=4:2, lwd=5, lty=1, bg="white")
+```
+
+### Maximum Likelihood Estimation
+
+Now we switch to estimating the parameters of the state space model using maximum likelihood estimation (MLE).
+
+Consider the state space model and geneate the simulated data.
+\begin{align}
+y_t &= x_t + v_t, \quad v_t \overset{iid}{\sim} N(0, \sigma^2_v) \\
+x_t &= \phi x_{t-1} + w_t, \quad w_t \overset{iid}{\sim} N(0, \sigma^2_w) \\
+\end{align}
+
+```{r}
+# Generate Data
+set.seed(999)
+num = 100
+N = num+1
+x = arima.sim(n=N, list(ar = .8, sd=1))
+y = ts(x[-1] + rnorm(num,0,1))
+```
+
+Then we initialize parameters using what we calculated before
+\begin{equation}
+\phi^{(0)} = \frac{\hat\rho_y(2)}{\hat\rho_y(1)}, \quad 
+(\sigma^2_w)^{(0)} = \frac{1-(\phi^{(0)})^2}{\phi^{(0)}} \hat\gamma_y(1), \quad
+(\sigma^2_v)^{(0)} = \hat\gamma_y(0) - \frac{(\sigma^2_w)^{(0)}}{1-(\phi^{(0)})^2}
+\end{equation}
+
+```{r}
+# Initial Estimates 
+u = ts.intersect(y, lag(y,-1), lag(y,-2)) 
+varu = var(u)
+coru = cor(u) 
+phi = coru[1,3]/coru[1,2]             
+q = (1-phi^2)*varu[1,2]/phi   
+r = varu[1,1] - q/(1-phi^2) 
+(init.par = c(phi, sqrt(q), sqrt(r))) 
+```
+
+Lastly, we use `BFGS`to optimize the log-likelihood function to obtain MLE estimate.
+
+```{r}
+# Function to evaluate the likelihood 
+Linn=function(para){
+  phi = para[1]; sigw = para[2]; sigv = para[3]   
+  Sigma0 = (sigw^2)/(1-phi^2); Sigma0[Sigma0<0]=0   
+  kf = Kfilter0(num,y,1,mu0=0,Sigma0,phi,sigw,sigv)
+  return(kf$like)   
+}
+
+# Estimation  
+(est = optim(init.par, Linn, gr=NULL, method="BFGS", hessian=TRUE, control=list(trace=1,REPORT=1)))      
+SE = sqrt(diag(solve(est$hessian)))
+cbind(estimate=c(phi=est$par[1],sigw=est$par[2],sigv=est$par[3]), SE)
+```
+
+### Hidden Markov Models (HMM)
+
+Now we consider a Poisson-HMM model for the number of major earthquakes, $y_t$, with data in `depmixS4` library.
+\begin{align}
+P[x_t=1] &\pi_1=\frac{\pi_{21}}{\pi_{12}+\pi_{21}}, \quad P[x_t=2]=\pi_2=\frac{\pi_{12}}{\pi_{12}+\pi_{21}} \\
+P[y_{t}|x_t=i] &= p_j(y) = \frac{\lambda_j^y e^{-\lambda_j}}{y!}, \quad y=1,2,\cdots
+\end{align}
+
+
+
+```{r, fig.height = 6, fig.width = 9}
+library(depmixS4)
+##  note - as of updata 1.4-2, you can get standard errors ##
+model <- depmix(EQcount ~1, nstates=2, data=data.frame(EQcount), family=poisson('identity'), respstart=c(15,25))
+set.seed(90210)
+summary(fm <- fit(model))   # estimation results  
+standardError(fm)           # with standard errors
+
+##-- Get + Display Parameters --##
+para.mle = as.vector(getpars(fm))[3:8]  
+( mtrans = matrix(para.mle[1:4], byrow=TRUE, nrow=2) )
+( lams   = para.mle[5:6] )  
+( pi1    = mtrans[2,1]/(2 - mtrans[1,1] - mtrans[2,2]) )  
+( pi2    = 1 - pi1 )
+
+#-- Graphics --##
+par(mfrow=c(3,1))
+# data and states
+tsplot(EQcount, main="", ylab='EQcount', type='h', col=gray(.7))
+text(EQcount, col=6*posterior(fm)[,1]-2, labels=posterior(fm)[,1], cex=.9)
+# prob of state 2
+tsplot(ts(posterior(fm)[,3], start=1900), ylab = expression(hat(pi)[~2]*'(t|n)'));  abline(h=.5, lty=2)
+# histogram
+hist(EQcount, breaks=30, prob=TRUE, main="")
+xvals = seq(1,45)
+u1 = pi1*dpois(xvals, lams[1])  
+u2 = pi2*dpois(xvals, lams[2])
+lines(xvals, u1, col=4)   
+lines(xvals, u2, col=2)
+```
+
+## Bayesian State Space Models
+
+Lastly, we consider a Bayesian analysis of the above local level model
+\begin{equation}
+\begin{aligned}
+y_t &= \mu_t + v_t, \quad v_t \overset{iid}{\sim} N(0, \sigma^2_v) \\
+\mu_t &= \mu_{t-1} + w_t, \quad w_t \overset{iid}{\sim} N(0, \sigma^2_w) \\
+\end{aligned}
+\end{equation}
+We generate $y_{1:n}$ for $n=100$ with true values $\sigma^2_w = 0.5$ and $\sigma^2_v =1$.
+
+```{r}
+# Simulate states and data
+set.seed(1); W = 0.5; V = 1.0
+n  = 100; m0 = 0.0; C0 = 10.0; x0 = 0
+w  = rnorm(n,0,sqrt(W))
+v  = rnorm(n,0,sqrt(V))
+x  = y = rep(0,n)
+x[1] = x0   + w[1]
+y[1] = x[1] + v[1]
+for (t in 2:n){
+  x[t] = x[t-1] + w[t]
+  y[t] = x[t] + v[t]   }
+```
+
+Then We adopt inverse gamma priors for variance parameters
+\begin{equation}
+\sigma^2_w \sim \Gamma^{-1}(a_0/2, b_0/2), \quad \sigma^2_v \sim \Gamma^{-1}(c_0/2, d_0/2)
+\end{equation}
+where we set $a_0=b_0=c_0=d_0=0.02$.
+We use forward-filtering, backward- sampling (FFBS) algorithm to obtain the samples of the state.
+We run MCMC to obtain 1010 samples and burn in the first 10.
+
+```{r, fig.height = 6, fig.width = 9}
+#########################################################################################
+# Adapted from code by: Hedibert Freitas Lopes
+#########################################################################################
+##-- Notation --##
+#           y(t) = x(t) + v(t);    v(t) ~ iid N(0,V)                     
+#           x(t) = x(t-1) + w(t);  w(t) ~ iid N(0,W)                        
+#  priors:  x(0) ~ N(m0,C0);  V ~ IG(a,b);  W ~ IG(c,d)
+#    FFBS:  x(t|t) ~ N(m,C);  x(t|n) ~ N(mm,CC);  x(t|t+1) ~ N(a,R)  
+##-- 
+ffbs = function(y,V,W,m0,C0){
+  n  = length(y);  a  = rep(0,n);  R  = rep(0,n)
+  m  = rep(0,n);   C  = rep(0,n);  B  = rep(0,n-1)     
+  H  = rep(0,n-1); mm = rep(0,n);  CC = rep(0,n)
+  x  = rep(0,n); llike = 0.0
+  for (t in 1:n){
+    if(t==1){a[1] = m0; R[1] = C0 + W
+    }else{ a[t] = m[t-1]; R[t] = C[t-1] + W }
+    f      = a[t]
+    Q      = R[t] + V
+    A      = R[t]/Q
+    m[t]   = a[t]+A*(y[t]-f)
+    C[t]   = R[t]-Q*A**2
+    B[t-1] = C[t-1]/R[t]
+    H[t-1] = C[t-1]-R[t]*B[t-1]**2
+    llike  = llike + dnorm(y[t],f,sqrt(Q),log=TRUE) }
+  mm[n] = m[n]; CC[n] = C[n]
+  x[n]  = rnorm(1,m[n],sqrt(C[n]))
+  for (t in (n-1):1){
+    mm[t] = m[t] + C[t]/R[t+1]*(mm[t+1]-a[t+1])
+    CC[t] = C[t] - (C[t]^2)/(R[t+1]^2)*(R[t+1]-CC[t+1])
+    x[t]  = rnorm(1,m[t]+B[t]*(x[t+1]-a[t+1]),sqrt(H[t]))  }
+  return(list(x=x,m=m,C=C,mm=mm,CC=CC,llike=llike))   }
+
+# actual smoother (for plotting)
+ks = Ksmooth0(num=n, y, A=1, m0, C0, Phi=1, cQ=sqrt(W), cR=sqrt(V))
+xsmooth = as.vector(ks$xs)
+#
+run = ffbs(y,V,W,m0,C0)
+m   = run$m; C = run$C; mm = run$mm
+CC  = run$CC; L1 = m-2*C; U1  = m+2*C
+L2  = mm-2*CC; U2 = mm+2*CC
+N   = 50
+Vs  = seq(0.1,2,length=N)
+Ws  = seq(0.1,2,length=N)
+likes = matrix(0,N,N)
+for (i in 1:N){
+  for (j in 1:N){
+    V   = Vs[i]
+    W   = Ws[j]
+    run = ffbs(y,V,W,m0,C0)    
+    likes[i,j] = run$llike  }  }  
+# Hyperparameters
+a = 0.01; b = 0.01; c = 0.01; d = 0.01
+# MCMC step
+set.seed(90210)
+burn  = 10;  M = 1000
+niter = burn + M
+V1    = V;  W1 = W
+draws = NULL
+all_draws = NULL
+for (iter in 1:niter){
+  run   = ffbs(y,V1,W1,m0,C0)
+  x     = run$x
+  V1    = 1/rgamma(1,a+n/2,b+sum((y-x)^2)/2)
+  W1    = 1/rgamma(1,c+(n-1)/2,d+sum(diff(x)^2)/2)
+  draws = rbind(draws,c(V1,W1,x))    }
+all_draws = draws[,1:2]
+q025  = function(x){quantile(x,0.025)}
+q975  = function(x){quantile(x,0.975)}
+draws = draws[(burn+1):(niter),]
+xs    = draws[,3:(n+2)]
+lx    = apply(xs,2,q025)
+mx    = apply(xs,2,mean)
+ux    = apply(xs,2,q975)
+##  plot of the data
+par(mfrow=c(2,2), mgp=c(1.6,.6,0), mar=c(3,3.2,1,1))
+ts.plot(ts(x), ts(y), ylab='', col=c(1,8), lwd=2)
+points(y)
+legend(0, 11, legend=c("x(t)","y(t)"), lty=1, col=c(1,8), lwd=2, bty="n", pch=c(-1,1))
+contour(Vs, Ws, exp(likes), xlab=expression(sigma[v]^2), ylab=expression(sigma[w]^2), 
+        drawlabels=FALSE, ylim=c(0,1.2))
+points(draws[,1:2], pch=16, col=rgb(.9,0,0,0.3), cex=.7)
+hist(draws[,1], ylab="Density",main="", xlab=expression(sigma[v]^2))
+abline(v=mean(draws[,1]), col=3, lwd=3)
+hist(draws[,2],main="", ylab="Density", xlab=expression(sigma[w]^2))
+abline(v=mean(draws[,2]), col=3, lwd=3)
+## plot states
+par(mgp=c(1.6,.6,0), mar=c(2,1,.5,0)+.5)
+plot(ts(mx), ylab='', type='n', ylim=c(min(y),max(y)))
+grid(lty=2); points(y)
+lines(xsmooth, lwd=4, col=rgb(1,0,1,alpha=.4))
+lines(mx, col= 4) 
+xx=c(1:100, 100:1)
+yy=c(lx, rev(ux))
+polygon(xx, yy, border=NA, col= gray(.6,alpha=.2))
+lines(y, col=gray(.4))
+legend('topleft', c('true smoother', 'data', 'posterior mean', '95% of draws'), lty=1, 
+       lwd=c(3,1,1,10), pch=c(-1,1,-1,-1), col=c(6, gray(.4), 4, gray(.6, alpha=.5)), 
+       bg='white' )
+```
+
